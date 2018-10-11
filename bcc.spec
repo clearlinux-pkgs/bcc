@@ -4,7 +4,7 @@
 #
 Name     : bcc
 Version  : 0.7.0
-Release  : 1
+Release  : 3
 URL      : https://github.com/iovisor/bcc/archive/v0.7.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.7.0.tar.gz
 Summary  : BPF Compiler Collection (BCC)
@@ -23,6 +23,7 @@ BuildRequires : git
 BuildRequires : llvm-dev
 BuildRequires : llvm-extras
 BuildRequires : pkgconfig(libelf)
+Patch1: 0001-Link-to-the-single-libLLVM-library.patch
 
 %description
 Python bindings for BPF Compiler Collection (BCC). Control a BPF program from
@@ -85,21 +86,22 @@ python3 components for the bcc package.
 
 %prep
 %setup -q -n bcc-0.7.0
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1539127236
+export SOURCE_DATE_EPOCH=1539284904
 mkdir -p clr-build
 pushd clr-build
 %cmake .. -DREVISION=%{version}
-make  %{?_smp_mflags}
+make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1539127236
+export SOURCE_DATE_EPOCH=1539284904
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/LICENSE.txt
