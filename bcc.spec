@@ -4,7 +4,7 @@
 #
 Name     : bcc
 Version  : 0.7.0
-Release  : 3
+Release  : 4
 URL      : https://github.com/iovisor/bcc/archive/v0.7.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.7.0.tar.gz
 Summary  : BPF Compiler Collection (BCC)
