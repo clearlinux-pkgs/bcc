@@ -4,7 +4,7 @@
 #
 Name     : bcc
 Version  : 0.11.0
-Release  : 9
+Release  : 10
 URL      : https://github.com/iovisor/bcc/archive/v0.11.0/bcc-0.11.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.11.0/bcc-0.11.0.tar.gz
 Source1  : https://github.com/libbpf/libbpf/archive/v0.0.5/libbpf-0.0.5.tar.gz
