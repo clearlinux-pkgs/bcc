@@ -4,9 +4,9 @@
 #
 Name     : bcc
 Version  : 0.12.0
-Release  : 11
-URL      : https://github.com/iovisor/bcc/archive/v0.11.0/bcc-0.12.0.tar.gz
-Source0  : https://github.com/iovisor/bcc/archive/v0.11.0/bcc-0.12.0.tar.gz
+Release  : 12
+URL      : https://github.com/iovisor/bcc/archive/v0.12.0/bcc-0.12.0.tar.gz
+Source0  : https://github.com/iovisor/bcc/archive/v0.12.0/bcc-0.12.0.tar.gz
 Source1  : https://github.com/libbpf/libbpf/archive/v0.0.5/libbpf-0.0.5.tar.gz
 Summary  : BPF Compiler Collection (BCC)
 Group    : Development/Tools
@@ -113,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1576100906
+export SOURCE_DATE_EPOCH=1576101764
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -126,7 +126,7 @@ make  %{?_smp_mflags}  VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1576100906
+export SOURCE_DATE_EPOCH=1576101764
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc-0.11.0/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd
