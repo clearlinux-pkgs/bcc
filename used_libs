@@ -1,13 +1,6 @@
-libLLVM.so.9
+libLLVM.so.10
 libc.so.6
-libclangAST.so.9
-libclangBasic.so.9
-libclangCodeGen.so.9
-libclangDriver.so.9
-libclangFrontend.so.9
-libclangLex.so.9
-libclangRewrite.so.9
-libclangSerialization.so.9
+libclang-cpp.so.10
 libelf.so.1
 libgcc_s.so.1
 libluajit-5.1.so.2
