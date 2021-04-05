@@ -1,5 +1,5 @@
 PKG_NAME := bcc
-URL = https://github.com/iovisor/bcc/archive/v0.15.0/bcc-0.15.0.tar.gz
-ARCHIVES = https://github.com/libbpf/libbpf/archive/v0.0.9/libbpf-0.0.9.tar.gz src/cc/libbpf
+URL = https://github.com/iovisor/bcc/archive/v0.19.0/bcc-0.19.0.tar.gz
+ARCHIVES = https://github.com/libbpf/libbpf/archive/092a606856252091ccbded34114d544280c24d35/libbpf-092a606856252091ccbded34114d544280c24d35.tar.gz src/cc/libbpf
 
 include ../common/Makefile.common
