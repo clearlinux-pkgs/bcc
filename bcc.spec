@@ -4,7 +4,7 @@
 #
 Name     : bcc
 Version  : 0.19.0
-Release  : 22
+Release  : 23
 URL      : https://github.com/iovisor/bcc/archive/v0.19.0/bcc-0.19.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.19.0/bcc-0.19.0.tar.gz
 Source1  : https://github.com/libbpf/libbpf/archive/092a606856252091ccbded34114d544280c24d35/libbpf-092a606856252091ccbded34114d544280c24d35.tar.gz
@@ -113,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1617649154
+export SOURCE_DATE_EPOCH=1618876967
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -122,11 +122,11 @@ export FCFLAGS="$FFLAGS -fno-lto "
 export FFLAGS="$FFLAGS -fno-lto "
 export CXXFLAGS="$CXXFLAGS -fno-lto "
 %cmake .. -DREVISION=%{version}
-make  %{?_smp_mflags}
+make  %{?_smp_mflags}  VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1617649154
+export SOURCE_DATE_EPOCH=1618876967
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc-0.19.0/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd
