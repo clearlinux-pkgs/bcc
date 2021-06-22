@@ -4,10 +4,10 @@
 #
 Name     : bcc
 Version  : 0.20.0
-Release  : 24
+Release  : 25
 URL      : https://github.com/iovisor/bcc/archive/v0.20.0/bcc-0.20.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.20.0/bcc-0.20.0.tar.gz
-Source1  : https://github.com/libbpf/libbpf/archive/092a606856252091ccbded34114d544280c24d35/libbpf-092a606856252091ccbded34114d544280c24d35.tar.gz
+Source1  : https://github.com/libbpf/libbpf/archive/c5389a965bc3f19e07b1ee161092fc227e364e94/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94.tar.gz
 Summary  : BPF Compiler Collection (BCC)
 Group    : Development/Tools
 License  : Apache-2.0 BSD-2-Clause LGPL-2.1
@@ -102,10 +102,10 @@ python3 components for the bcc package.
 %prep
 %setup -q -n bcc-0.20.0
 cd %{_builddir}
-tar xf %{_sourcedir}/libbpf-092a606856252091ccbded34114d544280c24d35.tar.gz
+tar xf %{_sourcedir}/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94.tar.gz
 cd %{_builddir}/bcc-0.20.0
 mkdir -p src/cc/libbpf
-cp -r %{_builddir}/libbpf-092a606856252091ccbded34114d544280c24d35/* %{_builddir}/bcc-0.20.0/src/cc/libbpf
+cp -r %{_builddir}/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94/* %{_builddir}/bcc-0.20.0/src/cc/libbpf
 %patch1 -p1
 
 %build
@@ -113,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1624320271
+export SOURCE_DATE_EPOCH=1624335668
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -126,12 +126,12 @@ make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1624320271
+export SOURCE_DATE_EPOCH=1624335668
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc-0.20.0/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/libbpf-092a606856252091ccbded34114d544280c24d35/LICENSE.BSD-2-Clause %{buildroot}/usr/share/package-licenses/bcc/34c5034377edef1080538bd0d4f5cf9b78e22dff
-cp %{_builddir}/libbpf-092a606856252091ccbded34114d544280c24d35/LICENSE.LGPL-2.1 %{buildroot}/usr/share/package-licenses/bcc/91c66db733cf0ff2b3216ec4223b940daf6b26d4
+cp %{_builddir}/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94/LICENSE.BSD-2-Clause %{buildroot}/usr/share/package-licenses/bcc/34c5034377edef1080538bd0d4f5cf9b78e22dff
+cp %{_builddir}/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94/LICENSE.LGPL-2.1 %{buildroot}/usr/share/package-licenses/bcc/91c66db733cf0ff2b3216ec4223b940daf6b26d4
 pushd clr-build
 %make_install
 popd

@@ -814,6 +814,7 @@ libbcc.so.0:bpf_map__def
 libbcc.so.0:bpf_map__fd
 libbcc.so.0:bpf_map__get_pin_path
 libbcc.so.0:bpf_map__ifindex
+libbcc.so.0:bpf_map__inner_map
 libbcc.so.0:bpf_map__is_internal
 libbcc.so.0:bpf_map__is_offload_neutral
 libbcc.so.0:bpf_map__is_pinned
@@ -896,6 +897,7 @@ libbcc.so.0:bpf_object__pin_maps
 libbcc.so.0:bpf_object__pin_programs
 libbcc.so.0:bpf_object__priv
 libbcc.so.0:bpf_object__section_size
+libbcc.so.0:bpf_object__set_kversion
 libbcc.so.0:bpf_object__set_priv
 libbcc.so.0:bpf_object__unload
 libbcc.so.0:bpf_object__unpin_maps
@@ -1040,6 +1042,7 @@ libbcc.so.0:btf__add_ptr
 libbcc.so.0:btf__add_restrict
 libbcc.so.0:btf__add_str
 libbcc.so.0:btf__add_struct
+libbcc.so.0:btf__add_type
 libbcc.so.0:btf__add_typedef
 libbcc.so.0:btf__add_union
 libbcc.so.0:btf__add_var
@@ -1077,8 +1080,6 @@ libbcc.so.0:btf__set_fd
 libbcc.so.0:btf__set_pointer_size
 libbcc.so.0:btf__str_by_offset
 libbcc.so.0:btf__type_by_id
-libbcc.so.0:btf_add_mem
-libbcc.so.0:btf_ensure_mem
 libbcc.so.0:btf_ext__free
 libbcc.so.0:btf_ext__func_info_rec_size
 libbcc.so.0:btf_ext__get_raw_data
@@ -1086,7 +1087,13 @@ libbcc.so.0:btf_ext__line_info_rec_size
 libbcc.so.0:btf_ext__new
 libbcc.so.0:btf_ext__reloc_func_info
 libbcc.so.0:btf_ext__reloc_line_info
+libbcc.so.0:btf_ext_visit_str_offs
+libbcc.so.0:btf_ext_visit_type_ids
 libbcc.so.0:btf_get_from_fd
+libbcc.so.0:btf_kind_str
+libbcc.so.0:btf_type_by_id
+libbcc.so.0:btf_type_visit_str_offs
+libbcc.so.0:btf_type_visit_type_ids
 libbcc.so.0:hashmap__capacity
 libbcc.so.0:hashmap__clear
 libbcc.so.0:hashmap__delete
@@ -1098,7 +1105,9 @@ libbcc.so.0:hashmap__new
 libbcc.so.0:hashmap__size
 libbcc.so.0:libbpf__bpf_prog_load
 libbcc.so.0:libbpf__load_raw_btf
+libbcc.so.0:libbpf_add_mem
 libbcc.so.0:libbpf_attach_type_by_name
+libbcc.so.0:libbpf_ensure_mem
 libbcc.so.0:libbpf_find_kernel_btf
 libbcc.so.0:libbpf_find_vmlinux_btf_id
 libbcc.so.0:libbpf_get_error
@@ -1111,6 +1120,7 @@ libbcc.so.0:libbpf_prog_type_by_name
 libbcc.so.0:libbpf_set_print
 libbcc.so.0:libbpf_strerror
 libbcc.so.0:libbpf_strerror_r
+libbcc.so.0:parse_btf_map_def
 libbcc.so.0:parse_cpu_mask_file
 libbcc.so.0:parse_cpu_mask_str
 libbcc.so.0:perf_buffer__buffer_cnt
@@ -1135,6 +1145,13 @@ libbcc.so.0:ring_buffer__epoll_fd
 libbcc.so.0:ring_buffer__free
 libbcc.so.0:ring_buffer__new
 libbcc.so.0:ring_buffer__poll
+libbcc.so.0:skip_mods_and_typedefs
+libbcc.so.0:strset__add_str
+libbcc.so.0:strset__data
+libbcc.so.0:strset__data_size
+libbcc.so.0:strset__find_str
+libbcc.so.0:strset__free
+libbcc.so.0:strset__new
 libbcc_bpf.so.0:bcc_check_bpffs_path
 libbcc_bpf.so.0:bcc_create_map
 libbcc_bpf.so.0:bcc_create_map_xattr
@@ -1191,6 +1208,10 @@ libbcc_bpf.so.0:bpf_link_detach
 libbcc_bpf.so.0:bpf_link_get_fd_by_id
 libbcc_bpf.so.0:bpf_link_get_next_id
 libbcc_bpf.so.0:bpf_link_update
+libbcc_bpf.so.0:bpf_linker__add_file
+libbcc_bpf.so.0:bpf_linker__finalize
+libbcc_bpf.so.0:bpf_linker__free
+libbcc_bpf.so.0:bpf_linker__new
 libbcc_bpf.so.0:bpf_load_btf
 libbcc_bpf.so.0:bpf_load_program
 libbcc_bpf.so.0:bpf_load_program_xattr
@@ -1205,6 +1226,7 @@ libbcc_bpf.so.0:bpf_map__def
 libbcc_bpf.so.0:bpf_map__fd
 libbcc_bpf.so.0:bpf_map__get_pin_path
 libbcc_bpf.so.0:bpf_map__ifindex
+libbcc_bpf.so.0:bpf_map__inner_map
 libbcc_bpf.so.0:bpf_map__is_internal
 libbcc_bpf.so.0:bpf_map__is_offload_neutral
 libbcc_bpf.so.0:bpf_map__is_pinned
@@ -1279,6 +1301,7 @@ libbcc_bpf.so.0:bpf_object__pin_maps
 libbcc_bpf.so.0:bpf_object__pin_programs
 libbcc_bpf.so.0:bpf_object__priv
 libbcc_bpf.so.0:bpf_object__section_size
+libbcc_bpf.so.0:bpf_object__set_kversion
 libbcc_bpf.so.0:bpf_object__set_priv
 libbcc_bpf.so.0:bpf_object__unload
 libbcc_bpf.so.0:bpf_object__unpin_maps
@@ -1403,6 +1426,7 @@ libbcc_bpf.so.0:btf__add_ptr
 libbcc_bpf.so.0:btf__add_restrict
 libbcc_bpf.so.0:btf__add_str
 libbcc_bpf.so.0:btf__add_struct
+libbcc_bpf.so.0:btf__add_type
 libbcc_bpf.so.0:btf__add_typedef
 libbcc_bpf.so.0:btf__add_union
 libbcc_bpf.so.0:btf__add_var
@@ -1440,12 +1464,10 @@ libbcc_bpf.so.0:btf__set_fd
 libbcc_bpf.so.0:btf__set_pointer_size
 libbcc_bpf.so.0:btf__str_by_offset
 libbcc_bpf.so.0:btf__type_by_id
-libbcc_bpf.so.0:btf_add_mem
 libbcc_bpf.so.0:btf_dump__dump_type
 libbcc_bpf.so.0:btf_dump__emit_type_decl
 libbcc_bpf.so.0:btf_dump__free
 libbcc_bpf.so.0:btf_dump__new
-libbcc_bpf.so.0:btf_ensure_mem
 libbcc_bpf.so.0:btf_ext__free
 libbcc_bpf.so.0:btf_ext__func_info_rec_size
 libbcc_bpf.so.0:btf_ext__get_raw_data
@@ -1453,7 +1475,13 @@ libbcc_bpf.so.0:btf_ext__line_info_rec_size
 libbcc_bpf.so.0:btf_ext__new
 libbcc_bpf.so.0:btf_ext__reloc_func_info
 libbcc_bpf.so.0:btf_ext__reloc_line_info
+libbcc_bpf.so.0:btf_ext_visit_str_offs
+libbcc_bpf.so.0:btf_ext_visit_type_ids
 libbcc_bpf.so.0:btf_get_from_fd
+libbcc_bpf.so.0:btf_kind_str
+libbcc_bpf.so.0:btf_type_by_id
+libbcc_bpf.so.0:btf_type_visit_str_offs
+libbcc_bpf.so.0:btf_type_visit_type_ids
 libbcc_bpf.so.0:hashmap__capacity
 libbcc_bpf.so.0:hashmap__clear
 libbcc_bpf.so.0:hashmap__delete
@@ -1465,7 +1493,9 @@ libbcc_bpf.so.0:hashmap__new
 libbcc_bpf.so.0:hashmap__size
 libbcc_bpf.so.0:libbpf__bpf_prog_load
 libbcc_bpf.so.0:libbpf__load_raw_btf
+libbcc_bpf.so.0:libbpf_add_mem
 libbcc_bpf.so.0:libbpf_attach_type_by_name
+libbcc_bpf.so.0:libbpf_ensure_mem
 libbcc_bpf.so.0:libbpf_find_kernel_btf
 libbcc_bpf.so.0:libbpf_find_vmlinux_btf_id
 libbcc_bpf.so.0:libbpf_get_error
@@ -1478,6 +1508,7 @@ libbcc_bpf.so.0:libbpf_prog_type_by_name
 libbcc_bpf.so.0:libbpf_set_print
 libbcc_bpf.so.0:libbpf_strerror
 libbcc_bpf.so.0:libbpf_strerror_r
+libbcc_bpf.so.0:parse_btf_map_def
 libbcc_bpf.so.0:parse_cpu_mask_file
 libbcc_bpf.so.0:parse_cpu_mask_str
 libbcc_bpf.so.0:perf_buffer__buffer_cnt
@@ -1502,6 +1533,13 @@ libbcc_bpf.so.0:ring_buffer__epoll_fd
 libbcc_bpf.so.0:ring_buffer__free
 libbcc_bpf.so.0:ring_buffer__new
 libbcc_bpf.so.0:ring_buffer__poll
+libbcc_bpf.so.0:skip_mods_and_typedefs
+libbcc_bpf.so.0:strset__add_str
+libbcc_bpf.so.0:strset__data
+libbcc_bpf.so.0:strset__data_size
+libbcc_bpf.so.0:strset__find_str
+libbcc_bpf.so.0:strset__free
+libbcc_bpf.so.0:strset__new
 libbcc_bpf.so.0:xsk_setup_xdp_prog
 libbcc_bpf.so.0:xsk_socket__create
 libbcc_bpf.so.0:xsk_socket__create_shared
