@@ -4,7 +4,7 @@
 #
 Name     : bcc
 Version  : 0.20.0
-Release  : 26
+Release  : 27
 URL      : https://github.com/iovisor/bcc/archive/v0.20.0/bcc-0.20.0.tar.gz
 Source0  : https://github.com/iovisor/bcc/archive/v0.20.0/bcc-0.20.0.tar.gz
 Source1  : https://github.com/libbpf/libbpf/archive/c5389a965bc3f19e07b1ee161092fc227e364e94/libbpf-c5389a965bc3f19e07b1ee161092fc227e364e94.tar.gz
@@ -113,7 +113,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1624335668
+export SOURCE_DATE_EPOCH=1636153798
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -126,7 +126,7 @@ make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1624335668
+export SOURCE_DATE_EPOCH=1636153798
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc-0.20.0/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd
