@@ -5,7 +5,7 @@
 #
 Name     : bcc
 Version  : 0.27.0
-Release  : 34
+Release  : 36
 URL      : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Source0  : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Summary  : BPF Compiler Collection (BCC)
@@ -31,6 +31,7 @@ BuildRequires : pkgconfig(libelf)
 # Suppress stripping binaries
 %define __strip /bin/true
 %define debug_package %{nil}
+Patch1: backport-Fix-a-llvm-compilation-error.patch
 
 %description
 Python bindings for BPF Compiler Collection (BCC). Control a BPF program from
@@ -106,13 +107,14 @@ python3 components for the bcc package.
 %prep
 %setup -q -n bcc
 cd %{_builddir}/bcc
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1680548238
+export SOURCE_DATE_EPOCH=1680626950
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -120,12 +122,13 @@ export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-l
 export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
 export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
 export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-%cmake .. -DREVISION=%{version}
+%cmake .. -DREVISION=%{version} \
+-DENABLE_LLVM_SHARED=1
 make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1680548238
+export SOURCE_DATE_EPOCH=1680626950
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd || :

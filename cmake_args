@@ -1,1 +1,2 @@
 -DREVISION=%{version}
+-DENABLE_LLVM_SHARED=1
