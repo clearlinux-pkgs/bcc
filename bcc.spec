@@ -5,7 +5,7 @@
 #
 Name     : bcc
 Version  : 0.27.0
-Release  : 36
+Release  : 37
 URL      : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Source0  : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Summary  : BPF Compiler Collection (BCC)
@@ -31,7 +31,6 @@ BuildRequires : pkgconfig(libelf)
 # Suppress stripping binaries
 %define __strip /bin/true
 %define debug_package %{nil}
-Patch1: backport-Fix-a-llvm-compilation-error.patch
 
 %description
 Python bindings for BPF Compiler Collection (BCC). Control a BPF program from
@@ -107,28 +106,42 @@ python3 components for the bcc package.
 %prep
 %setup -q -n bcc
 cd %{_builddir}/bcc
-%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1680626950
+export SOURCE_DATE_EPOCH=1684253959
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+%cmake .. -DREVISION=%{version} \
+-DENABLE_LLVM_SHARED=1
+make  %{?_smp_mflags}
+popd
+mkdir -p clr-build-avx2
+pushd clr-build-avx2
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -O3 -Wl,-z,x86-64-v3 -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd -march=x86-64-v3 "
+export FCFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd -march=x86-64-v3 "
+export FFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd -march=x86-64-v3 "
+export CXXFLAGS="$CXXFLAGS -O3 -Wl,-z,x86-64-v3 -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd -march=x86-64-v3 "
+export CFLAGS="$CFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
 %cmake .. -DREVISION=%{version} \
 -DENABLE_LLVM_SHARED=1
 make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1680626950
+export SOURCE_DATE_EPOCH=1684253959
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
@@ -138,19 +151,25 @@ cp %{_builddir}/bcc/libbpf-tools/bpftool/libbpf/LICENSE.BSD-2-Clause %{buildroot
 cp %{_builddir}/bcc/libbpf-tools/bpftool/libbpf/LICENSE.LGPL-2.1 %{buildroot}/usr/share/package-licenses/bcc/91c66db733cf0ff2b3216ec4223b940daf6b26d4 || :
 cp %{_builddir}/bcc/src/cc/libbpf/LICENSE.BSD-2-Clause %{buildroot}/usr/share/package-licenses/bcc/419ec3c0b11c7d22472ea99c03c347413a4ea406 || :
 cp %{_builddir}/bcc/src/cc/libbpf/LICENSE.LGPL-2.1 %{buildroot}/usr/share/package-licenses/bcc/91c66db733cf0ff2b3216ec4223b940daf6b26d4 || :
+pushd clr-build-avx2
+%make_install_v3  || :
+popd
 pushd clr-build
 %make_install
 popd
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
 
 %files bin
 %defattr(-,root,root,-)
+/V3/usr/bin/bcc-lua
 /usr/bin/bcc-lua
 
 %files data
 %defattr(-,root,root,-)
+/V3/usr/share/bcc/introspection/bps
 /usr/share/bcc/examples/hello_world.py
 /usr/share/bcc/examples/lua/bashreadline.c
 /usr/share/bcc/examples/lua/bashreadline.lua
@@ -184,8 +203,10 @@ popd
 /usr/share/bcc/examples/networking/neighbor_sharing/simulation.py
 /usr/share/bcc/examples/networking/neighbor_sharing/tc_neighbor_sharing.c
 /usr/share/bcc/examples/networking/neighbor_sharing/tc_neighbor_sharing.py
+/usr/share/bcc/examples/networking/net_monitor.py
 /usr/share/bcc/examples/networking/simple_tc.py
 /usr/share/bcc/examples/networking/simulation.py
+/usr/share/bcc/examples/networking/sockmap.py
 /usr/share/bcc/examples/networking/tc_perf_event.py
 /usr/share/bcc/examples/networking/tunnel_monitor/README.md
 /usr/share/bcc/examples/networking/tunnel_monitor/chord.png
@@ -280,6 +301,7 @@ popd
 /usr/share/bcc/man/man8/exitsnoop.8.gz
 /usr/share/bcc/man/man8/ext4dist.8.gz
 /usr/share/bcc/man/man8/ext4slower.8.gz
+/usr/share/bcc/man/man8/filegone.8.gz
 /usr/share/bcc/man/man8/filelife.8.gz
 /usr/share/bcc/man/man8/fileslower.8.gz
 /usr/share/bcc/man/man8/filetop.8.gz
@@ -321,6 +343,7 @@ popd
 /usr/share/bcc/man/man8/phpflow.8.gz
 /usr/share/bcc/man/man8/phpstat.8.gz
 /usr/share/bcc/man/man8/pidpersec.8.gz
+/usr/share/bcc/man/man8/ppchcalls.8.gz
 /usr/share/bcc/man/man8/profile.8.gz
 /usr/share/bcc/man/man8/pythoncalls.8.gz
 /usr/share/bcc/man/man8/pythonflow.8.gz
@@ -442,6 +465,7 @@ popd
 /usr/share/bcc/tools/doc/exitsnoop_example.txt
 /usr/share/bcc/tools/doc/ext4dist_example.txt
 /usr/share/bcc/tools/doc/ext4slower_example.txt
+/usr/share/bcc/tools/doc/filegone_example.txt
 /usr/share/bcc/tools/doc/filelife_example.txt
 /usr/share/bcc/tools/doc/fileslower_example.txt
 /usr/share/bcc/tools/doc/filetop_example.txt
@@ -488,6 +512,7 @@ popd
 /usr/share/bcc/tools/doc/phpflow_example.txt
 /usr/share/bcc/tools/doc/phpstat_example.txt
 /usr/share/bcc/tools/doc/pidpersec_example.txt
+/usr/share/bcc/tools/doc/ppchcalls_example.txt
 /usr/share/bcc/tools/doc/profile_example.txt
 /usr/share/bcc/tools/doc/pythoncalls_example.txt
 /usr/share/bcc/tools/doc/pythonflow_example.txt
@@ -548,6 +573,7 @@ popd
 /usr/share/bcc/tools/exitsnoop
 /usr/share/bcc/tools/ext4dist
 /usr/share/bcc/tools/ext4slower
+/usr/share/bcc/tools/filegone
 /usr/share/bcc/tools/filelife
 /usr/share/bcc/tools/fileslower
 /usr/share/bcc/tools/filetop
@@ -589,6 +615,7 @@ popd
 /usr/share/bcc/tools/old/bashreadline
 /usr/share/bcc/tools/old/biosnoop
 /usr/share/bcc/tools/old/compactsnoop
+/usr/share/bcc/tools/old/filegone
 /usr/share/bcc/tools/old/filelife
 /usr/share/bcc/tools/old/gethostlatency
 /usr/share/bcc/tools/old/hardirqs
@@ -616,6 +643,7 @@ popd
 /usr/share/bcc/tools/phpflow
 /usr/share/bcc/tools/phpstat
 /usr/share/bcc/tools/pidpersec
+/usr/share/bcc/tools/ppchcalls
 /usr/share/bcc/tools/profile
 /usr/share/bcc/tools/pythoncalls
 /usr/share/bcc/tools/pythonflow
@@ -687,9 +715,12 @@ popd
 /usr/include/bcc/compat/linux/bpf.h
 /usr/include/bcc/compat/linux/bpf_common.h
 /usr/include/bcc/compat/linux/btf.h
+/usr/include/bcc/compat/linux/fcntl.h
 /usr/include/bcc/compat/linux/if_link.h
 /usr/include/bcc/compat/linux/if_xdp.h
+/usr/include/bcc/compat/linux/netdev.h
 /usr/include/bcc/compat/linux/netlink.h
+/usr/include/bcc/compat/linux/openat2.h
 /usr/include/bcc/compat/linux/perf_event.h
 /usr/include/bcc/compat/linux/pkt_cls.h
 /usr/include/bcc/compat/linux/pkt_sched.h
@@ -698,14 +729,20 @@ popd
 /usr/include/bcc/perf_reader.h
 /usr/include/bcc/table_desc.h
 /usr/include/bcc/table_storage.h
-/usr/lib64/libbcc.so
-/usr/lib64/libbcc_bpf.so
 /usr/lib64/pkgconfig/libbcc.pc
 
 %files lib
 %defattr(-,root,root,-)
+/V3/usr/lib64/libbcc.so
+/V3/usr/lib64/libbcc.so.0
+/V3/usr/lib64/libbcc.so.0.27.0
+/V3/usr/lib64/libbcc_bpf.so
+/V3/usr/lib64/libbcc_bpf.so.0
+/V3/usr/lib64/libbcc_bpf.so.0.27.0
+/usr/lib64/libbcc.so
 /usr/lib64/libbcc.so.0
 /usr/lib64/libbcc.so.0.27.0
+/usr/lib64/libbcc_bpf.so
 /usr/lib64/libbcc_bpf.so.0
 /usr/lib64/libbcc_bpf.so.0.27.0
 
