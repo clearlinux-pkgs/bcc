@@ -5,12 +5,12 @@
 #
 Name     : bcc
 Version  : 0.27.0
-Release  : 37
+Release  : 38
 URL      : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Source0  : https://github.com/iovisor/bcc/releases/download/v0.27.0/bcc-src-with-submodule.tar.gz
 Summary  : BPF Compiler Collection (BCC)
 Group    : Development/Tools
-License  : Apache-2.0 BSD-2-Clause GPL-2.0 LGPL-2.1
+License  : Apache-2.0 BSD-2-Clause BSD-3-Clause GPL-2.0 LGPL-2.1
 Requires: bcc-bin = %{version}-%{release}
 Requires: bcc-data = %{version}-%{release}
 Requires: bcc-lib = %{version}-%{release}
@@ -112,7 +112,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1684253959
+export SOURCE_DATE_EPOCH=1685482646
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -141,10 +141,11 @@ make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1684253959
+export SOURCE_DATE_EPOCH=1685482646
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/bcc
 cp %{_builddir}/bcc/LICENSE.txt %{buildroot}/usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/bcc/libbpf-tools/blazesym/LICENSE %{buildroot}/usr/share/package-licenses/bcc/5235caaaf02d2d2743807910a7a0ad600b2f8b94 || :
 cp %{_builddir}/bcc/libbpf-tools/bpftool/LICENSE.BSD-2-Clause %{buildroot}/usr/share/package-licenses/bcc/34c5034377edef1080538bd0d4f5cf9b78e22dff || :
 cp %{_builddir}/bcc/libbpf-tools/bpftool/LICENSE.GPL-2.0 %{buildroot}/usr/share/package-licenses/bcc/4cc77b90af91e615a64ae04893fdffa7939db84c || :
 cp %{_builddir}/bcc/libbpf-tools/bpftool/libbpf/LICENSE.BSD-2-Clause %{buildroot}/usr/share/package-licenses/bcc/419ec3c0b11c7d22472ea99c03c347413a4ea406 || :
@@ -733,11 +734,7 @@ popd
 
 %files lib
 %defattr(-,root,root,-)
-/V3/usr/lib64/libbcc.so
-/V3/usr/lib64/libbcc.so.0
 /V3/usr/lib64/libbcc.so.0.27.0
-/V3/usr/lib64/libbcc_bpf.so
-/V3/usr/lib64/libbcc_bpf.so.0
 /V3/usr/lib64/libbcc_bpf.so.0.27.0
 /usr/lib64/libbcc.so
 /usr/lib64/libbcc.so.0
@@ -751,6 +748,7 @@ popd
 /usr/share/package-licenses/bcc/34c5034377edef1080538bd0d4f5cf9b78e22dff
 /usr/share/package-licenses/bcc/419ec3c0b11c7d22472ea99c03c347413a4ea406
 /usr/share/package-licenses/bcc/4cc77b90af91e615a64ae04893fdffa7939db84c
+/usr/share/package-licenses/bcc/5235caaaf02d2d2743807910a7a0ad600b2f8b94
 /usr/share/package-licenses/bcc/91c66db733cf0ff2b3216ec4223b940daf6b26d4
 /usr/share/package-licenses/bcc/92170cdc034b2ff819323ff670d3b7266c8bffcd
 
