@@ -7,7 +7,7 @@
 #
 Name     : bcc
 Version  : 0.28.0
-Release  : 41
+Release  : 42
 URL      : https://github.com/iovisor/bcc/releases/download/v0.28.0/bcc-src-with-submodule.tar.gz
 Source0  : https://github.com/iovisor/bcc/releases/download/v0.28.0/bcc-src-with-submodule.tar.gz
 Summary  : BPF Compiler Collection (BCC)
