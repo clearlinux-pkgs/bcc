@@ -1,9 +1,8 @@
-libLLVM-16.so
+libLLVM.so.19.1
 libc.so.6
-libclang-cpp.so.16
+libclang-cpp.so.19.1
 libelf.so.1
 libgcc_s.so.1
-libluajit-5.1.so.2
 liblzma.so.5
 libm.so.6
 libstdc++.so.6

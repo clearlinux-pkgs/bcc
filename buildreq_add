@@ -1,5 +1,9 @@
 # This file contains additional build requirements that did not get
 # picked up automatically. One name per line, no whitespace.
+libbpf-dev
+libedit-dev
+libffi-dev
 llvm-dev
 llvm-staticdev
 flex-dev
+xz-dev
