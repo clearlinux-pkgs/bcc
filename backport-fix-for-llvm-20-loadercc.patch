@@ -1,0 +1,55 @@
+From 9713b915441f9fa0d64b08273213dc7428d47760 Mon Sep 17 00:00:00 2001
+From: yonghong-song <ys114321@gmail.com>
+Date: Sat, 23 Nov 2024 13:47:25 -0800
+Subject: [PATCH] Fix LLVM-20 compilation failure (#5155)
+
+Upstream llvm patch
+  https://github.com/llvm/llvm-project/pull/115852
+changed signature for function createDiagnostics().
+This patch fixed the issue.
+
+Signed-off-by: Yonghong Song <yonghong.song@linux.dev>
+---
+ src/cc/frontends/clang/loader.cc | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/cc/frontends/clang/loader.cc b/src/cc/frontends/clang/loader.cc
+index 7950cda40051..dbb4f8c3da91 100644
+--- a/src/cc/frontends/clang/loader.cc
++++ b/src/cc/frontends/clang/loader.cc
+@@ -467,7 +467,11 @@ int ClangLoader::do_compile(
+   }
+   invocation0.getFrontendOpts().DisableFree = false;
+ 
++#if LLVM_VERSION_MAJOR >= 20
++  compiler0.createDiagnostics(*llvm::vfs::getRealFileSystem(), new IgnoringDiagConsumer());
++#else
+   compiler0.createDiagnostics(new IgnoringDiagConsumer());
++#endif
+ 
+   // capture the rewritten c file
+   string out_str;
+@@ -486,7 +490,11 @@ int ClangLoader::do_compile(
+   add_main_input(invocation1, main_path, &*out_buf);
+   invocation1.getFrontendOpts().DisableFree = false;
+ 
++#if LLVM_VERSION_MAJOR >= 20
++  compiler1.createDiagnostics(*llvm::vfs::getRealFileSystem());
++#else
+   compiler1.createDiagnostics();
++#endif
+ 
+   // capture the rewritten c file
+   string out_str1;
+@@ -512,7 +520,11 @@ int ClangLoader::do_compile(
+   invocation2.getCodeGenOpts().setInlining(CodeGenOptions::NormalInlining);
+   // suppress warnings in the 2nd pass, but bail out on errors (our fault)
+   invocation2.getDiagnosticOpts().IgnoreWarnings = true;
++#if LLVM_VERSION_MAJOR >= 20
++  compiler2.createDiagnostics(*llvm::vfs::getRealFileSystem());
++#else
+   compiler2.createDiagnostics();
++#endif
+ 
+   EmitLLVMOnlyAction ir_act(&*ctx_);
+   if (!compiler2.ExecuteAction(ir_act))

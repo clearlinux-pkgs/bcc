@@ -1,0 +1,75 @@
+From 1832c03ccf0ecbe90afb902db7c827faa6f2ca27 Mon Sep 17 00:00:00 2001
+From: yonghong-song <ys114321@gmail.com>
+Date: Sat, 18 Jan 2025 17:11:21 -0800
+Subject: [PATCH] Fix llvm20 compilation error (#5194)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The following is the error message:
+
+/home/yhs/work/bcc/src/cc/frontends/clang/b_frontend_action.cc: In member function
+     ‘bool ebpf::BTypeVisitor::VisitBinaryOperator(clang::BinaryOperator*)’:
+/home/yhs/work/bcc/src/cc/frontends/clang/b_frontend_action.cc:1383:64: error:
+     no matching function for call to ‘clang::FieldDecl::getBitWidthValue(clang::ASTContext&)’
+ 1383 |             uint64_t sz = F->isBitField() ? F->getBitWidthValue(C) : C.getTypeSize(F->getType());
+      |                                             ~~~~~~~~~~~~~~~~~~~^~~
+
+which is due to upstream patch:
+   https://github.com/llvm/llvm-project/pull/122289
+
+This patch fixed the above compilation error.
+
+Signed-off-by: Yonghong Song <yonghong.song@linux.dev>
+---
+ src/cc/frontends/clang/b_frontend_action.cc | 8 ++++++++
+ src/cc/json_map_decl_visitor.cc             | 7 ++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/src/cc/frontends/clang/b_frontend_action.cc b/src/cc/frontends/clang/b_frontend_action.cc
+index 95cec3cb8654..34a3582e55a0 100644
+--- a/src/cc/frontends/clang/b_frontend_action.cc
++++ b/src/cc/frontends/clang/b_frontend_action.cc
+@@ -1380,7 +1380,11 @@ bool BTypeVisitor::VisitBinaryOperator(BinaryOperator *E) {
+             }
+ 
+             uint64_t ofs = C.getFieldOffset(F);
++#if LLVM_VERSION_MAJOR >= 20
++            uint64_t sz = F->isBitField() ? F->getBitWidthValue() : C.getTypeSize(F->getType());
++#else
+             uint64_t sz = F->isBitField() ? F->getBitWidthValue(C) : C.getTypeSize(F->getType());
++#endif
+             string base = rewriter_.getRewrittenText(expansionRange(Base->getSourceRange()));
+             string text = "bpf_dins_pkt(" + fn_args_[0]->getName().str() + ", (u64)" + base + "+" + to_string(ofs >> 3)
+                 + ", " + to_string(ofs & 0x7) + ", " + to_string(sz) + ",";
+@@ -1410,7 +1414,11 @@ bool BTypeVisitor::VisitImplicitCastExpr(ImplicitCastExpr *E) {
+             return false;
+           }
+           uint64_t ofs = C.getFieldOffset(F);
++#if LLVM_VERSION_MAJOR >= 20
++          uint64_t sz = F->isBitField() ? F->getBitWidthValue() : C.getTypeSize(F->getType());
++#else
+           uint64_t sz = F->isBitField() ? F->getBitWidthValue(C) : C.getTypeSize(F->getType());
++#endif
+           string text = "bpf_dext_pkt(" + fn_args_[0]->getName().str() + ", (u64)" + Ref->getDecl()->getName().str() + "+"
+               + to_string(ofs >> 3) + ", " + to_string(ofs & 0x7) + ", " + to_string(sz) + ")";
+           rewriter_.ReplaceText(expansionRange(E->getSourceRange()), text);
+diff --git a/src/cc/json_map_decl_visitor.cc b/src/cc/json_map_decl_visitor.cc
+index 22ed03ab5fab..9eb3fa9b9b3f 100644
+--- a/src/cc/json_map_decl_visitor.cc
++++ b/src/cc/json_map_decl_visitor.cc
+@@ -86,8 +86,13 @@ void BMapDeclVisitor::genJSONForField(FieldDecl *F) {
+ #else
+     result_ += ", [" + T->getSize().toString(10, false) + "]";
+ #endif
+-  if (F->isBitField())
++  if (F->isBitField()) {
++#if LLVM_VERSION_MAJOR >= 20
++    result_ += ", " + to_string(F->getBitWidthValue());
++#else
+     result_ += ", " + to_string(F->getBitWidthValue(C));
++#endif
++  }
+   result_ += "], ";
+ }
+ 

@@ -1,0 +1,28 @@
+From d472825402a7cac4749c95cf1089722c0e2474bc Mon Sep 17 00:00:00 2001
+From: Yonghong Song <yonghong.song@linux.dev>
+Date: Tue, 3 Sep 2024 17:57:00 -0700
+Subject: [PATCH] Fix a compilation issue with llvm20
+
+The upstream commit
+  https://github.com/llvm/llvm-project/pull/82240
+introduced a func signature change for func getFileLineInfoForAddress().
+Add proper change to accommodate llvm20 need for additional func
+arguments.
+---
+ src/cc/bcc_debug.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/cc/bcc_debug.cc b/src/cc/bcc_debug.cc
+index a79217527802..3e2754bbad8a 100644
+--- a/src/cc/bcc_debug.cc
++++ b/src/cc/bcc_debug.cc
+@@ -236,6 +236,9 @@ void SourceDebugger::dump() {
+             {(uint64_t)FuncStart + Index, SectionID},
+ #else
+             (uint64_t)FuncStart + Index,
++#endif
++#if LLVM_VERSION_MAJOR >= 20
++            false,
+ #endif
+             CU->getCompilationDir(),
+             DILineInfoSpecifier::FileLineInfoKind::AbsoluteFilePath, LineInfo);
